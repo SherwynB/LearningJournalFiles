@@ -16,7 +16,7 @@ rule myFormBook {
 
     meta:
         description = "Second Stage Loading of Formbook Sample"
-		author = "Sherwyn B"
+	author = "Sherwyn B"
         date = "2024-10-22"
         sha256 = "3a259b8cfd64e2e3086299d3038714dbbf4c41dcbb81b222c6b0e5ab979f75d3"
 
