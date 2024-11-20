@@ -1,0 +1,21 @@
+0000000000402DF9
+
+[Insert to Code Cave]
+
+pushad (on 64bit push registers individually)
+pushfd (pushfq on 64bit?)
+[My Shellcode]
+popfd
+popad
+
+0000000000401500 | 48:83EC 28               | sub rsp,28                              |
+jmp 0000000000401504 | 48:8B05 552F0000         | mov rax,qword ptr ds:[404460]           | rax:EntryPoint, 0000000000404460:"0p@"
+000000000040150B | C700 00000000            | mov dword ptr ds:[rax],0                | rax:EntryPoint
+0000000000401511 | E8 8A0D0000              | call codecaveapp.4022A0                 |
+0000000000401516 | E8 95FCFFFF              | call codecaveapp.4011B0                 |
+000000000040151B | 90                       | nop                                     |
+000000000040151C | 90                       | nop                                     |
+000000000040151D | 48:83C4 28               | add rsp,28                              |
+000000000040151B | 90                       | nop                                     |
+000000000040151C | 90                       | nop                                     |
+000000000040151D | 48:83C4 28               | add rsp,28                              |
