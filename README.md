@@ -1,2 +1,2 @@
 # LearningJournalFiles
-FileDump for the blog learning page
+FileDump for the learning page
