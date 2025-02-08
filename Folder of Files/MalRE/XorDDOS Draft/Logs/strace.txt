@@ -1,0 +1,19 @@
+execve("./cvckxesujqpz", ["./cvckxesujqpz", "-o", "dump.txt"], 0x7ffc1e1f6570 /* 48 vars */) = 0
+strace: [ Process PID=5526 runs in 32 bit mode. ]
+uname({sysname="Linux", nodename="remnux", ...}) = 0
+brk(NULL)                               = 0x913b000
+brk(0x913bcb0)                          = 0x913bcb0
+set_thread_area({entry_number=-1, base_addr=0x913b830, limit=0x0fffff, seg_32bit=1, contents=0, read_exec_only=0, limit_in_pages=1, seg_not_present=0, useable=1}) = 0 (entry_number=12)
+set_tid_address(0x913b878)              = 5526
+set_robust_list(0x913b880, 12)          = 0
+futex(0xffe85da4, FUTEX_WAKE_PRIVATE, 1) = 0
+rt_sigaction(SIGRTMIN, {sa_handler=0x8052f60, sa_mask=[], sa_flags=SA_SIGINFO}, NULL, 8) = 0
+rt_sigaction(SIGRT_1, {sa_handler=0x8052e80, sa_mask=[], sa_flags=SA_RESTART|SA_SIGINFO}, NULL, 8) = 0
+rt_sigprocmask(SIG_UNBLOCK, [RTMIN RT_1], NULL, 8) = 0
+ugetrlimit(RLIMIT_STACK, {rlim_cur=8192*1024, rlim_max=RLIM_INFINITY}) = 0
+uname({sysname="Linux", nodename="remnux", ...}) = 0
+brk(0x915ccb0)                          = 0x915ccb0
+brk(0x915d000)                          = 0x915d000
+clone(child_stack=NULL, flags=CLONE_CHILD_CLEARTID|CLONE_CHILD_SETTID|SIGCHLD, child_tidptr=0x913b878) = 5527
+exit_group(0)                           = ?
++++ exited with 0 +++
